@@ -1,0 +1,376 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "71a80aee-456a-4e79-a861-391ad9691e1a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://rss.app/feeds/jPqhPDQfNqj2JyGU.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        0
+      ],
+      "id": "f7d99f72-1ad7-492c-843f-7319bdb2af98",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        320,
+        0
+      ],
+      "id": "5e628724-22ce-4f22-ae91-88f3bff7d5d3",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot capable of pulling out data from\na job listing site.",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job data:\n {{ $json.title }}\n{{ $json.content }}"
+            },
+            {
+              "content": "=Please output the data in JSON format, using the following\nstructure:\n\n{\n\"company_name\": \"\",\n\"job_description\": \"\", //summary of over all JD along with required skillsets and experience\n\"location\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        500,
+        0
+      ],
+      "id": "7ef16c93-662c-40a9-b5d6-8cf49107327a",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "dcxhtFaIYXeguJf4",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot rating how closely a job listing\nis to a candidates skill set, on a score of 5.\nGive the following points:\na) 3 points for skills matching, 1 point for mostly\n   matching\nb) 1 point for it being the right experience level\nc) 1 point for it being a remote position\nd) 1 point if past job experience matches the job role\ne) 1 point if the skills on the resume align with the job\n   description\nf) 3 points if I meet the job qualifications posted based\n   on my resume",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job listing details:\n{{ $json.message.content.job_description }}\n\nHere is the candidate skill set:\nResume:\nPersonal Info:\nName: Sehajbir Singh | Phone: +1 416-890-6049 | Email: sehajbakshi12@gmail.com | Location: Mississauga, ON | PR: Canada | GitHub: github.com/Sehajbirsingh | LinkedIn: linkedin.com/in/sehajbir-singh-542b34207 | Portfolio: sehajbirsingh.github.io/portfolio\n\nSkills:\nPython, SQL, Java, C#, Azure, DBT, Airflow, Hadoop, Spark, Snowflake, SQL Server, MySQL, PostgreSQL, Terraform, Docker, Kubernetes, Git, GitHub, Power Platform, Pandas, NumPy, TensorFlow, scikit-learn, YOLO, Generative AI, LLMs, Tableau, Power BI, Plotly, Seaborn, Flask, React, Node, HTML, CSS, Jira, Scrum, Azure DevOps\n\nExperience:\n\nCloudEQS (Associate Data Engineer, Remote, Aug 2023–July 2024): Built ETL pipelines (Matillion, DBT); Migrated $10M+ datasets (Azure, Snowflake); Automated testing (Python); Developed Streamlit dashboards.\n\nASG Technologies (Cloud Analyst, Remote, Jan 2023–June 2023): Designed Tableau dashboards; Automated KPIs (SQL, Python, DAGs); Managed Azure pipelines.\n\nProjects:\n\nAirbnb Data Analysis: MongoDB → SQL Server, SSIS/SSAS, Power BI.\n\nAI Job Recommendation: Resume parser with GenAI (TensorFlow, Mistral API).\n\nSQL Migration Accelerator: Converted 500+ SQL scripts to Snowflake.\n\nEducation:\n\nPost-Grad Cert. Applied AI Solutions (2025) – George Brown College\n\nB.Tech Computer Science (2023) – Punjab Technical University\n\nCertifications:\nAWS Developer Associate (2023), Azure Data Scientist Associate DP-100 (2022)\n\n\n"
+            },
+            {
+              "content": "Please return JSON data structured the following way:\n{\n\"score\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        820,
+        0
+      ],
+      "id": "d6a53743-b3ce-4e31-a4a8-731ac7eb0fb8",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "dcxhtFaIYXeguJf4",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot perfect at creating cover letters\nfor a job. Please take the candidates resume and create a\ncustomized cover letter to the job.",
+              "role": "system"
+            },
+            {
+              "content": "=Here's the job listing details:\nTitle: {{ $('RSS Read').item.json.title }}\nDescription: {{ $('OpenAI').item.json.message.content.job_description }}\nName: {{ $('OpenAI').item.json.message.content.company_name }}\nLocation: {{ $('OpenAI').item.json.message.content.location }}\n\nHere is the candidate skill set:\nResume:\nPersonal Info:\nName: Sehajbir Singh | Phone: +1 416-890-6049 | Email: sehajbakshi12@gmail.com | Location: Mississauga, ON | PR: Canada | GitHub: github.com/Sehajbirsingh | LinkedIn: linkedin.com/in/sehajbir-singh-542b34207 | Portfolio: sehajbirsingh.github.io/portfolio\n\nSkills:\nPython, SQL, Java, C#, Azure, DBT, Airflow, Hadoop, Spark, Snowflake, SQL Server, MySQL, PostgreSQL, Terraform, Docker, Kubernetes, Git, GitHub, Power Platform, Pandas, NumPy, TensorFlow, scikit-learn, YOLO, Generative AI, LLMs, Tableau, Power BI, Plotly, Seaborn, Flask, React, Node, HTML, CSS, Jira, Scrum, Azure DevOps\n\nExperience:\n\nCloudEQS (Associate Data Engineer, Remote, Aug 2023–July 2024): Built ETL pipelines (Matillion, DBT); Migrated $10M+ datasets (Azure, Snowflake); Automated testing (Python); Developed Streamlit dashboards.\n\nASG Technologies (Cloud Analyst, Remote, Jan 2023–June 2023): Designed Tableau dashboards; Automated KPIs (SQL, Python, DAGs); Managed Azure pipelines.\n\nProjects:\n\nAirbnb Data Analysis: MongoDB → SQL Server, SSIS/SSAS, Power BI.\n\nAI Job Recommendation: Resume parser with GenAI (TensorFlow, Mistral API).\n\nSQL Migration Accelerator: Converted 500+ SQL scripts to Snowflake.\n\nEducation:\n\nPost-Grad Cert. Applied AI Solutions (2025) – George Brown College\n\nB.Tech Computer Science (2023) – Punjab Technical University\n\nCertifications:\nAWS Developer Associate (2023), Azure Data Scientist Associate DP-100 (2022)\n\n\n"
+            },
+            {
+              "content": "Please return JSON data structured the following way:\n{\n\"cover_letter\": \"\"\n}",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1140,
+        0
+      ],
+      "id": "c6c99812-0140-4917-ba5e-490cc133f7bb",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "dcxhtFaIYXeguJf4",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1mZgUOCq30LpAKGfTCQrL2p_eipbYiGnAaX7RBG6xURQ",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Jobs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mZgUOCq30LpAKGfTCQrL2p_eipbYiGnAaX7RBG6xURQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mZgUOCq30LpAKGfTCQrL2p_eipbYiGnAaX7RBG6xURQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('RSS Read').item.json.title }}",
+            "Link": "={{ $('RSS Read').item.json.link }}",
+            "Date": "={{ $('RSS Read').item.json.pubDate }}",
+            "Job Description": "={{ $('OpenAI').item.json.message.content.job_description }}",
+            "Company Name": "={{ $('OpenAI').item.json.message.content.company_name }}",
+            "Rating": "={{ $('OpenAI1').item.json.message.content.score }}",
+            "Cover Letter": "={{ $json.message.content.cover_letter }}"
+          },
+          "matchingColumns": [
+            "Link"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cover Letter",
+              "displayName": "Cover Letter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1460,
+        0
+      ],
+      "id": "f5f6f68a-78ef-4239-b094-b312c088c192",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PMPnXXHcWTQy0TLg",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "46c06a19-e7c1-4a5d-b1f0-add13d477ca1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9c1888ab2903790531d343d33d4f233af16a3a0774adf5721d331e5f2c566075"
+  },
+  "id": "tbIKB4MMhp3273PO",
+  "tags": []
+}
